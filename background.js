@@ -2,8 +2,26 @@ let timeoutId = null;
 
 chrome.tabs.onUpdated.addListener((tabId, info) => handleTab(tabId, info.url));
 chrome.tabs.onActivated.addListener((info) => handleTab(info.tabId));
+chrome.windows.onFocusChanged.addListener(() => handleTab());
 
 async function handleTab(tabId, url) {
+    if (tabId === undefined || tabId === null) {
+        chrome.windows.getCurrent({}, (window) => {
+            if (window && window.id !== null && window.id !== undefined) {
+                chrome.tabs.query({active: true, windowId: window.id}, (tab) => {
+                    if (tab.length !== 1) {
+                        return;
+                    }
+                    tab = tab[0];
+                    if (tab && tab.id !== null && tab.id !== undefined && tab.url) {
+                        handleTab(tab.id, tab.url)
+                    }
+                });
+            }
+        });
+        return;
+    }
+
     if (!url) {
         chrome.tabs.get(tabId, (tab) => {
             if (tab && tab.url) {
