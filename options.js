@@ -1,15 +1,14 @@
 async function getOptions() {
     return new Promise((resolve) => {
-        chrome.storage.sync.get(['blacklist', 'sitetime', 'frictiontime'], (items, a, b, c, d) => {
-            console.log(items, a, b, c, d)
+        chrome.storage.sync.get(['blacklist', 'sitetime', 'frictiontime'], (items) => {
             if (!items) {
                 resolve({
                     blacklist: ['reddit.com', 'facebook.com', 'twitter.com'],
                     siteTime: 120,
                     frictionTime: 6
                 });
+                return;
             }
-            console.log(items);
             let blacklist = items.blacklist || ['reddit.com', 'facebook.com', 'twitter.com'];
             if (typeof blacklist === 'string') {
                 blacklist = blacklist.split('\n');
