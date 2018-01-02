@@ -1,6 +1,6 @@
 {
     "name": "Friction",
-    "version": "0.1",
+    "version": "0.2",
     "manifest_version": 2,
     "description": "Introduce friction to those sites you use habitually but want to use less.",
     "background": {
