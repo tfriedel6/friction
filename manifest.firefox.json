@@ -4,7 +4,6 @@
     "manifest_version": 2,
     "description": "Introduce friction to those sites you use habitually but want to use less.",
     "background": {
-        "persistent": false,
         "scripts": [
             "background.js",
             "options.js"
@@ -17,7 +16,6 @@
     "options_ui": {
         "page": "options.html"
     },
-    "incognito": "split",
     "applications": {
       "gecko": {
         "id": "{4cee5697-0e8a-4d7f-ac04-348485072145}"

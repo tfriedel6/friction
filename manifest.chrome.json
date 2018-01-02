@@ -17,10 +17,5 @@
     "options_ui": {
         "page": "options.html"
     },
-    "incognito": "split",
-    "applications": {
-      "gecko": {
-        "id": "{4cee5697-0e8a-4d7f-ac04-348485072145}"
-      }
-    }
+    "incognito": "split"
 }
