@@ -12,8 +12,6 @@ async function handleURL(tabId, url) {
 
     let options = await getOptions();
 
-    console.log(options);
-
     if (!isDiscouraged(url, options.blacklist)) {
         return;
     }
