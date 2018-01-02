@@ -1,12 +1,15 @@
 let timeoutId = null;
 
-chrome.tabs.onUpdated.addListener((tabId, info) => handleURL(tabId, info.url));
-chrome.tabs.onActivated.addListener((info) => {
-    chrome.tabs.get(info.tabId, (tab) => handleURL(info.tabId, tab.url));
-});
+chrome.tabs.onUpdated.addListener((tabId, info) => handleTab(tabId, info.url));
+chrome.tabs.onActivated.addListener((info) => handleTab(info.tabId));
 
-async function handleURL(tabId, url) {
+async function handleTab(tabId, url) {
     if (!url) {
+        chrome.tabs.get(tabId, (tab) => {
+            if (tab && tab.url) {
+                handleTab(tabId, tab.url)
+            }
+        });
         return;
     }
 
@@ -27,7 +30,7 @@ async function handleURL(tabId, url) {
         if (timeoutId !== null) {
             clearTimeout(timeoutId);
         }
-        timeoutId = setTimeout(() => lockTab(tabId, options.blacklist), (options.siteTime - (now - unlockTime)) * 1000);
+        timeoutId = setTimeout(() => handleTab(tabId), (options.siteTime - (now - unlockTime)) * 1000);
         return;
     }
 
