@@ -37,10 +37,10 @@ async function handleTab(tabId, url) {
         return;
     }
 
-    let unlockTime = Number(localStorage.getItem('unlock') || 0);
+    let unlockTime = options.lastUnlock;
     let now = Date.now() / 1000;
     if (unlockTime > now) {
-        localStorage.removeItem('unlock');
+        chrome.storage.sync.set({'lastunlock': 0});
         unlockTime = 0;
     }
     let unlocked = now - unlockTime <= options.siteTime;
@@ -56,11 +56,12 @@ async function handleTab(tabId, url) {
 }
 
 function lockTab(tabId, blacklist) {
-    localStorage.removeItem('unlock');
-    chrome.tabs.get(tabId, (tab) => {
-        if (tab.active && tab.url && isDiscouraged(tab.url, blacklist)) {
-            chrome.tabs.update(tabId, {url: chrome.runtime.getURL('unlock.html') + '?url=' + encodeURIComponent(tab.url)});
-        }
+    chrome.storage.sync.set({'lastunlock': 0}, () => {
+        chrome.tabs.get(tabId, (tab) => {
+            if (tab.active && tab.url && isDiscouraged(tab.url, blacklist)) {
+                chrome.tabs.update(tabId, {url: chrome.runtime.getURL('unlock.html') + '?url=' + encodeURIComponent(tab.url)});
+            }
+        });
     });
 }
 

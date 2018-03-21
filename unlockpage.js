@@ -26,8 +26,11 @@ function doCountdown() {
 }
 
 function unlock() {
-    localStorage.setItem('unlock', Date.now() / 1000);
-    window.location = query.url;
+    chrome.storage.sync.set({'lastunlock': Date.now() / 1000}, () => {
+        getOptions().then((options) => {
+            window.location = query.url;
+        });
+    });
 }
 
 function parseQuery(search) {
