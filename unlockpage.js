@@ -1,6 +1,7 @@
 let countdown;
-
+let running = true;
 let query;
+let timeout;
 
 async function init() {
     let options = await getOptions();
@@ -11,10 +12,29 @@ async function init() {
     document.getElementById('unlockbutton').addEventListener('click', () => unlock());
     document.getElementById('unlockbutton').disabled = true;
     document.getElementById('countdown').innerText = '' + countdown;
-    setTimeout(() => doCountdown(), 1000);
+    window.addEventListener('blur', () => {
+        countdown = options.frictionTime;
+        document.getElementById('countdown').innerText = '' + countdown;
+        document.getElementById('unlockbutton').disabled = true;
+        running = false;
+    });
+    window.addEventListener('focus', () => {
+        running = true;
+        countdown = options.frictionTime;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => doCountdown(), 1000);
+    });
+    timeout = setTimeout(() => doCountdown(), 1000);
 }
 
-function doCountdown() {
+async function doCountdown() {
+    if (!running) {
+        let options = await getOptions();
+        countdown = options.frictionTime;
+        document.getElementById('countdown').innerText = '' + countdown;
+        document.getElementById('unlockbutton').disabled = true;
+        return;
+    }
     countdown--;
     if (countdown <= 0) {
         document.getElementById('countdown').innerText = '0';
