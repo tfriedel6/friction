@@ -37,6 +37,24 @@ async function handleTab(tabId, url) {
         return;
     }
 
+    if (options.schedule) {
+        let now = new Date();
+
+        let day = now.getDay();
+        if (day == 0) {
+            day += 7;
+        }
+        day--;
+        let schedule = options.schedule[day];
+
+        let timeOfDay = now.getHours() * 3600 * 1000;
+        timeOfDay += now.getMinutes() * 60 * 1000;
+
+        if (timeOfDay < schedule.from || timeOfDay >= schedule.to) {
+            return;
+        }
+    }
+
     let unlockTime = options.lastUnlock;
     let now = Date.now() / 1000;
     if (unlockTime > now) {

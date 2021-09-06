@@ -1,6 +1,6 @@
 async function getOptions() {
     return new Promise((resolve) => {
-        chrome.storage.sync.get(['blacklist', 'sitetime', 'frictiontime', 'lastunlock'], (items) => {
+        chrome.storage.sync.get(['blacklist', 'sitetime', 'frictiontime', 'lastunlock', 'schedule'], (items) => {
             if (!items) {
                 resolve({
                     blacklist: ['reddit.com', 'facebook.com', 'twitter.com'],
@@ -16,12 +16,14 @@ async function getOptions() {
             let siteTime = items.sitetime || 120;
             let frictionTime = items.frictiontime || 6;
             let lastUnlock = items.lastunlock || 0;
+            let schedule = items.schedule || null;
 
             resolve({
                 blacklist: blacklist,
                 siteTime: siteTime,
                 frictionTime: frictionTime,
                 lastUnlock: lastUnlock,
+                schedule: schedule,
             });
         });
     });
