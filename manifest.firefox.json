@@ -1,8 +1,11 @@
 {
     "name": "Friction",
-    "version": "0.3",
+    "version": "0.4",
     "manifest_version": 2,
     "description": "Introduce friction to those sites you use habitually but want to use less.",
+    "icons": {
+        "128": "icon_128.png"
+    },
     "background": {
         "scripts": [
             "background.js",
