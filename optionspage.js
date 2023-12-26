@@ -1,4 +1,4 @@
-let blacklistInput, siteTimeInput, frictionTimeInput;
+let blacklistInput, siteTimeInput, frictionTimeInput, allowedOpensInput;
 let scheduleEnabledInput, scheduleFromInput, scheduleToInput;
 let savedTimeout;
 
@@ -16,6 +16,10 @@ async function init() {
     frictionTimeInput.value = options.frictionTime;
     frictionTimeInput.addEventListener('change', () => save());
     frictionTimeInput.addEventListener('blur', () => save());
+    allowedOpensInput = document.getElementById('allowedopens');
+    allowedOpensInput.value = options.allowedOpens;
+    allowedOpensInput.addEventListener('change', () => save());
+    allowedOpensInput.addEventListener('blur', () => save());
     scheduleEnabledInput = document.getElementById('scheduleenabled');
     scheduleEnabledInput.checked = options.schedule != null;
     scheduleEnabledInput.addEventListener('change', () => save());
@@ -32,7 +36,7 @@ async function init() {
     }
 }
 
-function save() {
+async function save() {
     let schedule = null;
     if (scheduleEnabledInput.checked) {
         let from = scheduleFromInput.valueAsNumber;
@@ -47,10 +51,20 @@ function save() {
             {from: from, to: to},
         ];
     }
+    let options = await getOptions();
+    let remainingOpens;
+    if (allowedOpensInput.value !== options.allowedOpens) {
+        remainingOpens = Object.fromEntries(Object.entries(options.remainingOpens).map((item, index) => [item[0], allowedOpensInput.value]));
+    } else {
+        remainingOpens = options.remainingOpens;
+    }
+    
     chrome.storage.sync.set({
         'blacklist': blacklistInput.value,
         'sitetime': siteTimeInput.value,
         'frictiontime': frictionTimeInput.value,
+        'allowedopens': allowedOpensInput.value,
+        'remainingopens': remainingOpens,
         'schedule': schedule
     }, () => showSavedMessage());
 }

@@ -61,6 +61,17 @@ async function handleTab(tabId, url) {
         chrome.storage.sync.set({'lastunlock': 0});
         unlockTime = 0;
     }
+
+    let midnight = new Date(options.lastUnlock * 1000);
+    midnight.setDate(midnight.getDate() + 1);
+    midnight.setHours(0);
+    midnight.setMinutes(0);
+    midnight.setSeconds(0);
+    midnight.setMilliseconds(0);
+    if (new Date(now * 1000) >= midnight) {
+        chrome.storage.sync.set({'remainingopens': Object.fromEntries(options.blacklist.map((key, _index) => [key, options.allowedOpens]))});
+    }
+    
     let unlocked = now - unlockTime <= options.siteTime;
     if (unlocked) {
         if (timeoutId !== null) {
@@ -74,12 +85,10 @@ async function handleTab(tabId, url) {
 }
 
 function lockTab(tabId, blacklist) {
-    chrome.storage.sync.set({'lastunlock': 0}, () => {
-        chrome.tabs.get(tabId, (tab) => {
-            if (tab.active && tab.url && isDiscouraged(tab.url, blacklist)) {
-                chrome.tabs.update(tabId, {url: chrome.runtime.getURL('unlock.html') + '?url=' + encodeURIComponent(tab.url)});
-            }
-        });
+    chrome.tabs.get(tabId, (tab) => {
+        if (tab.active && tab.url && isDiscouraged(tab.url, blacklist)) {
+            chrome.tabs.update(tabId, {url: chrome.runtime.getURL('unlock.html') + '?url=' + encodeURIComponent(tab.url)});
+        }
     });
 }
 
